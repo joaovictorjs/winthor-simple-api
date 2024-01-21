@@ -14,18 +14,17 @@ main(const int argc, const char** argv)
   crow::SimpleApp app;
 
   CROW_ROUTE(app, "/v1/costumers/<int>")
-  ([&argv](int code) {
+  ([&argv](const int code) {
     using namespace oracle::occi;
 
     Environment* env = Environment::createEnvironment(Environment::DEFAULT);
     Connection* conn = env->createConnection(argv[1], argv[2], argv[3]);
 
-    const char* sql{};
+    const char* sql{ "SELECT cliente, endercob, bairrocob, municcob, cgcent, "
+                     "numeroent FROM PCCLIENT WHERE CODCLI = :v1" };
 
-    Statement* sttm = conn->createStatement(
-      "SELECT cliente, endercob, bairrocob, municcob, cgcent, "
-      "numeroent FROM PCCLIENT WHERE CODCLI = :v1");
-    sttm->setInt(1, code);
+    Statement* sttm = conn->createStatement(sql);
+    sttm->setNumber(1, code);
 
     conn->terminateStatement(sttm);
     env->terminateConnection(conn);
