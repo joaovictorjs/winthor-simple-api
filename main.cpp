@@ -21,7 +21,7 @@ main(const int argc, const char** argv)
     Connection* conn = env->createConnection(argv[1], argv[2], argv[3]);
 
     const char* sql{ "SELECT cliente, endercob, bairrocob, municcob, cgcent, "
-                     "numeroent FROM PCCLIENT WHERE CODCLI = 7" };
+                     "numeroent FROM PCCLIENT WHERE CODCLI = :v1" };
 
     Statement* sttm = conn->createStatement(sql);
     sttm->setInt(1, code);
