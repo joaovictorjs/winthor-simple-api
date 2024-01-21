@@ -20,10 +20,17 @@ main(const int argc, const char** argv)
     Environment* env = Environment::createEnvironment(Environment::DEFAULT);
     Connection* conn = env->createConnection(argv[1], argv[2], argv[3]);
 
+    const char* sql{ "SELECT cliente, endercob, bairrocob, municcob, cgcent, "
+                     "numeroent FROM PCCLIENT WHERE CODCLI = 7" };
+
+    Statement* sttm = conn->createStatement(sql);
+    sttm->setInt(1, code);
+
+    conn->terminateStatement(sttm);
     env->terminateConnection(conn);
     Environment::terminateEnvironment(env);
 
-    return std::to_string(code);
+    return sttm->getSQL();
   });
 
   CROW_ROUTE(app, "/v1/products/<int>")
