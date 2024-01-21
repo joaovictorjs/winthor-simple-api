@@ -47,7 +47,31 @@ main(const int argc, const char** argv)
   });
 
   CROW_ROUTE(app, "/v1/products/<int>")
-  ([](const int code) { return std::to_string(code); });
+  ([](const int code) {
+    using namespace oracle::occi;
+
+    Environment* env = Environment::createEnvironment(Environment::DEFAULT);
+    Connection* conn = env->createConnection(argv[1], argv[2], argv[3]);
+
+    const char* sql{ "SELECT descricao FROM PCPRODUT WHERE CODPROD = :v1" };
+
+    Statement* sttm = conn->createStatement(sql);
+    sttm->setNumber(1, code);
+
+    ResultSet* rset{ sttm->executeQuery() };
+    crow::json::wvalue json_res;
+
+    while (rset->next()) {
+      json_res["name"] = rset->getString(1);
+    }
+
+    sttm->closeResultSet(rset);
+    conn->terminateStatement(sttm);
+    env->terminateConnection(conn);
+    Environment::terminateEnvironment(env);
+
+    return json_res;
+  });
 
   app.port(18080).multithreaded().run();
 
