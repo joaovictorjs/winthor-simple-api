@@ -29,8 +29,8 @@ main(const int argc, const char** argv)
     conn->terminateStatement(sttm);
     env->terminateConnection(conn);
     Environment::terminateEnvironment(env);
-
-    return sttm->getSQL();
+    
+    return "";
   });
 
   CROW_ROUTE(app, "/v1/products/<int>")
