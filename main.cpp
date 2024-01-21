@@ -26,11 +26,24 @@ main(const int argc, const char** argv)
     Statement* sttm = conn->createStatement(sql);
     sttm->setNumber(1, code);
 
+    ResultSet* rset{ sttm->executeQuery() };
+    crow::json::wvalue json_res;
+
+    while (rset->next()) {
+      json_res["name"] = rset->getString(1);
+      json_res["address"] = rset->getString(2);
+      json_res["neighborhood"] = rset->getString(3);
+      json_res["city"] = rset->getString(4);
+      json_res["tax_id"] = rset->getString(5);
+      json_res["address_number"] = rset->getString(6);
+    }
+
+    sttm->closeResultSet(rset);
     conn->terminateStatement(sttm);
     env->terminateConnection(conn);
     Environment::terminateEnvironment(env);
-    
-    return "";
+
+    return json_res;
   });
 
   CROW_ROUTE(app, "/v1/products/<int>")
