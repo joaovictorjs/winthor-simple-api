@@ -14,7 +14,7 @@ main(const int argc, const char** argv)
   crow::SimpleApp app;
 
   CROW_ROUTE(app, "/v1/costumers/<int>")
-  ([&argv](const int code) {
+  ([&argv](int code) {
     using namespace oracle::occi;
 
     Environment* env = Environment::createEnvironment(Environment::DEFAULT);
